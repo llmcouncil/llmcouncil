@@ -73,6 +73,53 @@
             background-color: #8b5cf6;
             transition: width 0.1s ease-out;
         }
+
+        /* Logo Carousel Styles */
+        .logo-carousel-container {
+            padding-top: 2rem; /* py-8 */
+            padding-bottom: 2rem; /* py-8 */
+            background-color: #f9fafb; /* bg-gray-50 for contrast, or white */
+            overflow: hidden;
+        }
+        .logo-carousel {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+        }
+        .logo-carousel-track {
+            display: flex;
+            align-items: center; /* Vertically align icons if they have different heights */
+            /* Dynamically set width in JS: (icon_width_incl_margin * num_icons * 2) */
+            /* Animation will be set via JS or as fallback here */
+        }
+        .logo-carousel-track.animate {
+            animation: scroll 25s linear infinite;
+        }
+        .logo-carousel-track img {
+            height: 40px; /* Adjust size - aiming for smaller, sleeker look */
+            width: auto; /* Maintain aspect ratio */
+            margin: 0 40px; /* Adjust spacing (e.g., 80px effective space per icon) */
+            flex-shrink: 0;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            filter: grayscale(50%); /* Optional: make them a bit more subtle */
+        }
+        .logo-carousel-track img:hover {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            /* Dynamically set in JS: translateX to -(icon_width_incl_margin * num_icons) */
+            100% { transform: translateX(var(--scroll-end-translate-x, -1000px)); } /* Default fallback */
+        }
+        /* Pause animation on hover for the container */
+        .logo-carousel-container:hover .logo-carousel-track.animate {
+            animation-play-state: paused;
+        }
     </style>
 </head>
 <body class="font-sans antialiased text-gray-800">
@@ -145,6 +192,20 @@
                          <img src="assets/deepest-seek.jpg" alt="Deepest Seeker Interface Visual" class="object-cover w-full h-full" loading="lazy">
                     </div>
                     <p class="text-center mt-4 text-sm italic opacity-80">Visual: Deepest Seeker showing multi-AI comparison.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logo Carousel Section -->
+    <div class="logo-carousel-container bg-white"> <!-- Changed to white for better integration -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm font-semibold uppercase text-gray-500 tracking-wider mb-8">
+                INTEGRATED WITH LEADING AI PROVIDERS
+            </p>
+            <div class="logo-carousel">
+                <div class="logo-carousel-track">
+                    <!-- Icons will be dynamically inserted by JavaScript -->
                 </div>
             </div>
         </div>
@@ -557,6 +618,48 @@
             // Optional: If user clicks video to pause, and then clicks container again, it should not hide video.
             // This is handled by the `if (demoVideoPlayer.classList.contains('hidden'))` check.
         }
+
+        // Logo Carousel Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.querySelector('.logo-carousel-track');
+            if (track) {
+                const providerIcons = [
+                    { name: "Google", src: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.47.0/icons/google-color.svg", alt: "Google" },
+                    { name: "OpenAI", src: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.47.0/icons/openai.svg", alt: "OpenAI" },
+                    { name: "DeepSeek", src: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.47.0/icons/deepseek-color.svg", alt: "DeepSeek" },
+                    { name: "X", src: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.47.0/icons/xai.svg", alt: "X" },
+                    { name: "Anthropic", src: "https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.47.0/icons/anthropic.svg", alt: "Anthropic" },
+                ];
+
+                const iconsToDisplay = [...providerIcons, ...providerIcons]; // Duplicate for seamless loop
+
+                let totalWidthOfOneSet = 0;
+                // icon style: height: 40px; width: auto; margin: 0 40px;
+                const avgIconVisualWidth = 60; // Estimated average visual width of icons at 40px height
+                const iconHorizontalMarginTotal = 80; // 40px left + 40px right
+                const iconEffectiveWidth = avgIconVisualWidth + iconHorizontalMarginTotal;
+
+                providerIcons.forEach(() => {
+                    totalWidthOfOneSet += iconEffectiveWidth;
+                });
+                
+                track.style.width = `${totalWidthOfOneSet * 2}px`; // Width for two sets of icons
+
+                iconsToDisplay.forEach(iconData => {
+                    const img = document.createElement('img');
+                    img.src = iconData.src;
+                    img.alt = iconData.alt;
+                    img.title = iconData.name;
+                    track.appendChild(img);
+                });
+
+                // Set the CSS variable for the animation's end position
+                document.documentElement.style.setProperty('--scroll-end-translate-x', `-${totalWidthOfOneSet}px`);
+                
+                // Add animate class to start animation
+                track.classList.add('animate');
+            }
+        });
     </script>
 </body>
 </html>
