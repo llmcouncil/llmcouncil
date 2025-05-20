@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Council - Your AI Assistant for Chrome</title>
+    <title>Deepest Seeker: Compare Top AI Models Instantly | Free Chrome Extension</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Analytics Tracking Code (Placeholder) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXX');
+    </script>
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
@@ -24,647 +32,343 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .install-btn {
+        .feature-icon i {
+             color: transparent;
+        }
+        .download-btn {
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .install-btn:hover {
+        .download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(0,0,0,0.2);
         }
-        .animated-underline {
-            position: relative;
-            display: inline-block;
+        .sticky-cta {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            animation: pulse 2s infinite;
         }
-        .animated-underline::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            bottom: -5px;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .highlight-text {
+            background: linear-gradient(120deg, #ff6b6b30 0%, #4ecdc430 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        #progress-bar-container {
+            position: fixed;
+            top: 0;
             left: 0;
-            background: linear-gradient(90deg, #6e8efb 0%, #a777e3 100%);
-            transform: scaleX(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s ease;
+            width: 100%;
+            height: 4px;
+            z-index: 2000;
+            background-color: transparent;
         }
-        .animated-underline:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #8b5cf6;
+            transition: width 0.1s ease-out;
         }
     </style>
 </head>
 <body class="font-sans antialiased text-gray-800">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm fixed w-full z-10">
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <div class="sticky-cta md:hidden">
+        <a href="#download" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white gradient-bg shadow-lg hover:shadow-xl transition duration-300">
+            <i class="fas fa-download mr-2"></i> Get Free Now
+        </a>
+    </div>
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <i class="fas fa-robot text-3xl mr-2 text-purple-600"></i>
-                        <span class="text-xl font-bold text-gray-900">LLM Council</span>
-                    </div>
+                    <a href="#hero" class="flex items-center">
+                        <i class="fas fa-brain text-3xl mr-2 text-purple-600"></i>
+                        <span class="text-xl font-bold text-gray-900">Deepest Seeker</span>
+                    </a>
                 </div>
                 <div class="hidden md:ml-6 md:flex md:items-center space-x-8">
-                    <a href="#features" class="animated-underline px-3 py-2 text-sm font-medium">Features</a>
-                    <a href="#how-it-works" class="animated-underline px-3 py-2 text-sm font-medium">How It Works</a>
-                    <a href="#pricing" class="animated-underline px-3 py-2 text-sm font-medium">Pricing</a>
-                    <a href="#faq" class="animated-underline px-3 py-2 text-sm font-medium">FAQ</a>
+                    <a href="#features" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="#installation-guide" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium">Install Guide</a>
+                    <a href="#faq" class="text-gray-700 hover:text-purple-600 px-3 py-2 text-sm font-medium">FAQ</a>
                 </div>
                 <div class="flex items-center">
-                    <a href="#install" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white gradient-bg shadow-sm hover:shadow-md transition duration-300">
-                        Install Now
+                    <a href="#download" class="ml-4 inline-flex items-center px-5 py-3 border border-transparent text-sm font-medium rounded-md text-white gradient-bg shadow-lg hover:shadow-xl transition duration-300 download-btn">
+                        <i class="fas fa-rocket mr-2"></i> Get Free Access
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="pt-24 pb-16 gradient-bg text-white">
+    
+
+    <div id="hero" class="pt-24 pb-16 gradient-bg text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                 <div class="mb-12 lg:mb-0">
                     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-                        Supercharge Your Browser with <span class="text-yellow-300">AI Power</span>
+                        <span class="highlight-text">Save 5+ Hours Weekly:</span> Compare ChatGPT, Claude & Gemini <u>Side-by-Side, All in One Tab!</u>
                     </h1>
                     <p class="text-xl mb-8 opacity-90">
-                        LLM Council brings the power of multiple large language models directly to your Chrome browser. 
-                        Get instant AI assistance anywhere, anytime.
+                        Get instant access to 6+ top AI models in one click. Stop switching tabs - start comparing answers and creating superior content 3x faster!
                     </p>
+                    <div class="mb-8 p-4 bg-white bg-opacity-10 rounded-lg">
+                        <p class="text-sm italic">"Deepest Seeker cut my research time by 60%! The side-by-side comparisons are invaluable." <span class="font-semibold">- Sarah M., Content Director</span></p>
+                    </div>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="#install" class="install-btn inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-purple-700 bg-white hover:bg-gray-50 transition duration-300">
-                            <i class="fab fa-chrome mr-2"></i> Add to Chrome - It's Free
-                        </a>
-                        <a href="#demo" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-800 bg-opacity-60 hover:bg-opacity-70 transition duration-300">
-                            <i class="fas fa-play-circle mr-2"></i> Watch Demo
+                        <a href="#download" class="download-btn inline-flex items-center justify-center px-6 py-4 border border-transparent text-lg font-bold rounded-md text-purple-700 bg-white hover:bg-gray-50 transition duration-300">
+                            <i class="fas fa-download mr-2"></i> Download Free Extension
                         </a>
                     </div>
                     <div class="mt-8 flex items-center">
                         <div class="flex -space-x-2">
-                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/women/12.jpg" alt="">
-                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/men/11.jpg" alt="">
-                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/women/19.jpg" alt="">
+                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/women/12.jpg" alt="User avatar">
+                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/men/11.jpg" alt="User avatar">
+                            <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white" src="https://randomuser.me/api/portraits/women/19.jpg" alt="User avatar">
                         </div>
                         <p class="ml-4 text-sm opacity-90">
-                            Trusted by <span class="font-bold">10,000+</span> users worldwide
+                            Trusted by <span class="font-bold">1,000+</span> professionals
                         </p>
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="floating">
-                        <div class="relative mx-auto border-8 border-white rounded-xl overflow-hidden shadow-2xl" style="width: 300px; height: 450px;">
-                            <div class="absolute top-0 left-0 right-0 h-8 bg-gray-200 flex items-center px-2">
-                                <div class="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
-                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            </div>
-                            <div class="pt-8 px-4 pb-4 bg-white h-full">
-                                <div class="flex items-center mb-4">
-                                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                                        <i class="fas fa-robot text-purple-600"></i>
-                                    </div>
-                                    <div class="font-medium">LLM Council</div>
-                                </div>
-                                <div class="bg-gray-100 rounded-lg p-3 mb-3">
-                                    <p class="text-sm">How can I help you today?</p>
-                                </div>
-                                <div class="bg-purple-100 rounded-lg p-3 mb-3">
-                                    <p class="text-sm">I'm looking for information about AI advancements in 2023.</p>
-                                </div>
-                                <div class="bg-gray-100 rounded-lg p-3 mb-3">
-                                    <p class="text-sm">Here are the key AI advancements in 2023...</p>
-                                </div>
-                                <div class="absolute bottom-0 left-0 right-0 p-3 bg-white border-t">
-                                    <div class="flex">
-                                        <input type="text" placeholder="Type your message..." class="flex-1 border rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500">
-                                        <button class="bg-purple-600 text-white px-3 py-2 rounded-r-lg text-sm">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="relative mt-12 lg:mt-0">
+                    <div class="mx-auto border-8 border-gray-700 rounded-xl overflow-hidden shadow-2xl w-full max-w-md aspect-[4/3]">
+                         <img src="assets/deepest-seek.jpg" alt="Deepest Seeker Interface Visual" class="object-cover w-full h-full" loading="lazy">
+                    </div>
+                    <p class="text-center mt-4 text-sm italic opacity-80">Visual: Deepest Seeker showing multi-AI comparison.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-purple-600">5+</div>
+                    <div class="text-gray-600">AI Providers</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-purple-600">4.9/5</div>
+                    <div class="text-gray-600">Average Rating</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-purple-600">4+</div>
+                    <div class="text-gray-600">Integrated Web Search Providers</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-purple-600">$0</div>
+                    <div class="text-gray-600">Absolutely Free to Use</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="py-16 bg-purple-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div id="video-player-container" class="mx-auto border-8 border-gray-700 rounded-xl overflow-hidden shadow-2xl w-full max-w-md relative cursor-pointer">
+                <img id="video-thumbnail" src="assets/search-input.jpg" alt="Deepest Seeker Interface Visual - Click to play demo" class="object-cover w-full h-full">
+                <div id="play-button-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity duration-300 opacity-100 hover:opacity-75">
+                    <i class="fas fa-play-circle text-white text-7xl"></i>
+                </div>
+                <video id="demo-video-player" class="hidden w-full h-full" controls poster="search-input.jpg">
+                    <source src="assets/demo_video_deepest_seeker.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mt-6 mb-4">
+                Boost Your AI Productivity, Not Your Tab Count
+            </h2>
+       
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-purple-600 text-4xl mb-4">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">100% Local & Privacy-Focused</h3>
+                    <p class="text-gray-600 text-sm">Runs in your browser. We don't see or store your data.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-purple-600 text-4xl mb-4">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">30-Second Setup</h3>
+                    <p class="text-gray-600 text-sm">Simple ZIP install with our clear step-by-step guide.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="text-purple-600 text-4xl mb-4">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Completely Free</h3>
+                    <p class="text-gray-600 text-sm">In your browser, no strings attached.</p>
+                </div>
+            </div>
+            <a href="#download" class="download-btn inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-md text-white gradient-bg shadow-lg hover:shadow-xl transition duration-300">
+                <i class="fas fa-download mr-2"></i> Download now - It's free
+            </a>
+        </div>
+    </div>
+
+    
+  
+    <div class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    Real Stories from Deepest Seekers
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/75.jpg" alt="User review">
+                        <div class="ml-4">
+                            <div class="font-medium">"The Psychopath Coder"</div>
+                            <div class="text-purple-600">Dev & AI Enthusiast</div>
                         </div>
                     </div>
+                    <p class="text-gray-600 mb-4">
+                        "Okay, it's me. I'm that guy with 5 AI tabs open, copy-pasting like a maniac. Deepest Seeker is my enabler. Now I do it all in ONE tab. Ask all of them, see all responses, pick the winner. Sanity (mostly) restored, productivity definitely up."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-sm text-gray-500">2 days ago</span>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User review">
+                        <div class="ml-4">
+                            <div class="font-medium">CreativePro_Alex</div>
+                            <div class="text-purple-600">Writer & Marketer</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        "Brainstorming used to be a slog. I'd ask ChatGPT for ideas, then Claude for a different spin, then Gemini... you get it. With Deepest Seeker, I throw out one seed idea and instantly get a buffet of angles from different AIs. It's like having a diverse creative team in my browser. Helps me find that unique spark way faster."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="flex text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-sm text-gray-500">5 days ago</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Features Section -->
-    <div id="features" class="py-16 bg-white">
+     <!-- Installation Guide Section -->
+    <div id="installation-guide" class="py-16 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
+            <div class="text-center mb-12">
                 <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Powerful Features at Your Fingertips
+                    Quick Installation Guide
                 </h2>
                 <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Experience the next generation of browser AI assistance
+                    Get Deepest Seeker running in under a minute.
                 </p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-comment-dots"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Context-Aware Assistance</h3>
-                    <p class="text-gray-600">
-                        Get AI responses based on the webpage you're viewing. LLM Council understands context to provide relevant answers.
-                    </p>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Multi-Model Switching</h3>
-                    <p class="text-gray-600">
-                        Choose between different LLM providers to get the best response for your needs. GPT-4, Claude, and more.
-                    </p>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Content Enhancement</h3>
-                    <p class="text-gray-600">
-                        Improve your writing, summarize articles, or generate ideas without leaving your current page.
-                    </p>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Privacy Focused</h3>
-                    <p class="text-gray-600">
-                        Your data stays yours. We don't store conversations or sell your information to third parties.
-                    </p>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Lightning Fast</h3>
-                    <p class="text-gray-600">
-                        Optimized for speed with local caching and smart prefetching to minimize waiting time.
-                    </p>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-100">
-                    <div class="feature-icon mb-4">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">Customizable</h3>
-                    <p class="text-gray-600">
-                        Personalize your AI experience with custom prompts, keyboard shortcuts, and UI preferences.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- How It Works Section -->
-    <div id="how-it-works" class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    How LLM Council Works
-                </h2>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Get AI assistance in just a few simple steps
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 text-purple-600 mb-4">
-                        <span class="text-xl font-bold">1</span>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Install the Extension</h3>
-                    <p class="text-gray-600">
-                        Add LLM Council to Chrome with one click from the Chrome Web Store.
-                    </p>
-                </div>
-                <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 text-purple-600 mb-4">
-                        <span class="text-xl font-bold">2</span>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Activate Anywhere</h3>
-                    <p class="text-gray-600">
-                        Click the icon or use a keyboard shortcut to open the AI assistant.
-                    </p>
-                </div>
-                <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 text-purple-600 mb-4">
-                        <span class="text-xl font-bold">3</span>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Get AI Assistance</h3>
-                    <p class="text-gray-600">
-                        Ask questions, get summaries, or enhance content directly in your browser.
-                    </p>
-                </div>
-            </div>
-            <div class="mt-16 bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2">
-                    <div class="p-8">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Seamless Browser Integration</h3>
-                        <p class="text-gray-600 mb-6">
-                            LLM Council integrates directly into your browsing experience. Whether you're reading an article, composing an email, or researching a topic, our AI assistant is just a click away.
-                        </p>
-                        <ul class="space-y-4">
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 mt-1">
-                                    <div class="flex items-center justify-center h-6 w-6 rounded-full bg-green-100 text-green-600">
-                                        <i class="fas fa-check text-xs"></i>
-                                    </div>
-                                </div>
-                                <p class="ml-3 text-gray-600">
-                                    <span class="font-medium">Context-aware responses</span> based on the page you're viewing
-                                </p>
-                            </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 mt-1">
-                                    <div class="flex items-center justify-center h-6 w-6 rounded-full bg-green-100 text-green-600">
-                                        <i class="fas fa-check text-xs"></i>
-                                    </div>
-                                </div>
-                                <p class="ml-3 text-gray-600">
-                                    <span class="font-medium">Keyboard shortcuts</span> for quick access
-                                </p>
-                            </li>
-                            <li class="flex items-start">
-                                <div class="flex-shrink-0 mt-1">
-                                    <div class="flex items-center justify-center h-6 w-6 rounded-full bg-green-100 text-green-600">
-                                        <i class="fas fa-check text-xs"></i>
-                                    </div>
-                                </div>
-                                <p class="ml-3 text-gray-600">
-                                    <span class="font-medium">Dark mode</span> support for comfortable night-time use
-                                </p>
-                            </li>
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <ol class="list-decimal list-inside space-y-4 text-gray-700">
+                    <li>
+                        <strong>Download the ZIP:</strong> Click any "Download" button on this page. Save the `deepest_seek_0520.zip` file to your computer.
+                    </li>
+                    <li>
+                        <strong>Unzip the File:</strong> Find the downloaded ZIP file and extract its contents. You'll get a folder (e.g., "deepest-seeker-extension").
+                    </li>
+                    <li>
+                        <strong>Open Chrome Extensions:</strong>
+                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                            <li>Type `chrome://extensions` in your Chrome address bar and press Enter.</li>
+                            <li>Alternatively, click the three dots (⋮) in Chrome -> Extensions -> Manage Extensions.</li>
                         </ul>
-                    </div>
-                    <div class="bg-gray-50 p-8 flex items-center justify-center">
-                        <div class="relative mx-auto border-8 border-gray-200 rounded-xl overflow-hidden shadow-lg" style="width: 280px; height: 400px;">
-                            <div class="absolute top-0 left-0 right-0 h-8 bg-gray-200 flex items-center px-2">
-                                <div class="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                <div class="w-3 h-3 rounded-full bg-yellow-500 mr-1"></div>
-                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            </div>
-                            <div class="pt-8 px-4 pb-4 bg-white h-full">
-                                <div class="flex items-center mb-4">
-                                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-2">
-                                        <i class="fas fa-robot text-purple-600"></i>
-                                    </div>
-                                    <div class="font-medium">LLM Council</div>
-                                </div>
-                                <div class="bg-gray-100 rounded-lg p-3 mb-3">
-                                    <p class="text-sm">I noticed you're reading about quantum computing. Would you like me to summarize the key points?</p>
-                                </div>
-                                <div class="flex space-x-2 mb-3">
-                                    <button class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Yes, summarize</button>
-                                    <button class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Explain basics</button>
-                                </div>
-                                <div class="absolute bottom-0 left-0 right-0 p-3 bg-white border-t">
-                                    <div class="flex">
-                                        <input type="text" placeholder="Ask something..." class="flex-1 border rounded-l-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500">
-                                        <button class="bg-purple-600 text-white px-3 py-2 rounded-r-lg text-sm">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </li>
+                    <li>
+                        <strong>Enable Developer Mode:</strong> In the top right corner of the Extensions page, toggle on "Developer mode".
+                        <img src="assets/step1.jpg" alt="Chrome Developer Mode Toggle" class="mt-2 rounded shadow border max-w-md mx-auto">
+                        <p class="text-xs text-gray-500 italic mt-1">Image showing where to find the developer mode toggle.</p>
+                    </li>
+                    <li>
+                        <strong>Load Unpacked:</strong> Click the "Load unpacked" button that appears (usually on the top left).
+                        <img src="assets/step2.jpg" alt="Chrome Load Unpacked Button" class="mt-2 rounded shadow border max-w-md mx-auto">
+                         <p class="text-xs text-gray-500 italic mt-1">Image showing the 'Load unpacked' button.</p>
+                    </li>
+                    <li>
+                        <strong>Select the Folder:</strong> In the file dialog, navigate to and select the folder you unzipped in Step 2 (e.g., "deepest-seeker-extension"). Do NOT select the ZIP file itself.
+                    </li>
+                    <li>
+                        <strong>Done!</strong> Deepest Seeker should now appear in your list of extensions. Pin it to your toolbar for easy access!
+                    </li>
+                </ol>
             </div>
         </div>
     </div>
 
-    <!-- Pricing Section -->
-    <div id="pricing" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Simple, Transparent Pricing
-                </h2>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Choose the plan that fits your needs
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-200">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Free</h3>
-                    <div class="mb-6">
-                        <span class="text-4xl font-bold">$0</span>
-                        <span class="text-gray-600">/month</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">20 requests/day</span> across all models
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Basic models</span> access
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Community support</span>
-                            </p>
-                        </li>
-                    </ul>
-                    <button class="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-md font-medium">
-                        Current Plan
-                    </button>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border-2 border-purple-500 shadow-lg relative">
-                    <div class="absolute top-0 right-0 -mt-4 -mr-4 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        POPULAR
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Pro</h3>
-                    <div class="mb-6">
-                        <span class="text-4xl font-bold">$9</span>
-                        <span class="text-gray-600">/month</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">200 requests/day</span> across all models
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Advanced models</span> access
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Priority support</span>
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Custom prompts</span>
-                            </p>
-                        </li>
-                    </ul>
-                    <button class="w-full gradient-bg text-white py-2 px-4 rounded-md font-medium hover:shadow-md transition duration-300">
-                        Upgrade Now
-                    </button>
-                </div>
-                <div class="extension-card bg-white p-8 rounded-xl border border-gray-200">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Enterprise</h3>
-                    <div class="mb-6">
-                        <span class="text-4xl font-bold">$29</span>
-                        <span class="text-gray-600">/month</span>
-                    </div>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Unlimited requests</span> across all models
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">All premium models</span> access
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">24/7 dedicated support</span>
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">Team collaboration</span>
-                            </p>
-                        </li>
-                        <li class="flex items-start">
-                            <div class="flex-shrink-0 mt-1">
-                                <div class="flex items-center justify-center h-5 w-5 rounded-full bg-green-100 text-green-600">
-                                    <i class="fas fa-check text-xs"></i>
-                                </div>
-                            </div>
-                            <p class="ml-3 text-gray-600">
-                                <span class="font-medium">API access</span>
-                            </p>
-                        </li>
-                    </ul>
-                    <button class="w-full bg-gray-800 text-white py-2 px-4 rounded-md font-medium hover:bg-gray-900 transition duration-300">
-                        Contact Sales
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Testimonials Section -->
-    <div class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Loved by Professionals
-                </h2>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Don't just take our word for it
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-sm">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/32.jpg" alt="">
-                        </div>
-                        <div class="ml-4">
-                            <div class="font-medium">Sarah Johnson</div>
-                            <div class="text-purple-600">Content Strategist</div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">
-                        "LLM Council has transformed how I work. I can research, draft, and edit content without switching between tabs. The context awareness is incredible!"
-                    </p>
-                    <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-sm">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/54.jpg" alt="">
-                        </div>
-                        <div class="ml-4">
-                            <div class="font-medium">Michael Chen</div>
-                            <div class="text-purple-600">Software Engineer</div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">
-                        "As a developer, I use LLM Council daily for debugging help and code explanations. The multi-model switching lets me compare different AI perspectives."
-                    </p>
-                    <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-sm">
-                    <div class="flex items-center mb-4">
-                        <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/68.jpg" alt="">
-                        </div>
-                        <div class="ml-4">
-                            <div class="font-medium">Emma Rodriguez</div>
-                            <div class="text-purple-600">Research Analyst</div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">
-                        "The summarization feature saves me hours each week. I can quickly extract key points from lengthy reports and academic papers."
-                    </p>
-                    <div class="flex text-yellow-400">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  
 
-    <!-- FAQ Section -->
     <div id="faq" class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Frequently Asked Questions
+                    Answers to Common Questions
                 </h2>
-                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    Everything you need to know about LLM Council
-                </p>
             </div>
             <div class="max-w-3xl mx-auto">
                 <div class="space-y-4">
                     <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button onclick="toggleFAQ(1)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none">
-                            <span class="text-lg font-medium text-gray-900">What browsers does LLM Council support?</span>
+                        <button onclick="toggleFAQ(1)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50">
+                            <span class="text-lg font-medium text-gray-900">Will this slow down my browser?</span>
                             <i id="faq-icon-1" class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                         </button>
                         <div id="faq-content-1" class="hidden px-6 pb-6 pt-0">
                             <p class="text-gray-600">
-                                Currently, LLM Council is available as a Chrome extension. We're working on versions for Firefox, Edge, and Safari that will be released later this year.
+                                Not at all! Deepest Seeker is optimized for performance. Our lightweight extension uses minimal resources, often less than a single unused browser tab.
                             </p>
                         </div>
                     </div>
                     <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button onclick="toggleFAQ(2)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none">
-                            <span class="text-lg font-medium text-gray-900">How does the free plan differ from paid plans?</span>
+                        <button onclick="toggleFAQ(2)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50">
+                            <span class="text-lg font-medium text-gray-900">Is Deepest Seeker really free?</span>
                             <i id="faq-icon-2" class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                         </button>
                         <div id="faq-content-2" class="hidden px-6 pb-6 pt-0">
                             <p class="text-gray-600">
-                                The free plan gives you access to basic models with a limit of 20 requests per day. Paid plans offer more advanced models, higher request limits, priority support, and additional features like custom prompts and team collaboration.
+                                Yes! 100% free. No trials, no subscriptions, no hidden fees. All features are available to everyone at no cost.
                             </p>
                         </div>
                     </div>
-                    <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button onclick="toggleFAQ(3)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none">
-                            <span class="text-lg font-medium text-gray-900">Is my data private and secure?</span>
+                     <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button onclick="toggleFAQ(3)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50">
+                            <span class="text-lg font-medium text-gray-900">Which AI models are supported?</span>
                             <i id="faq-icon-3" class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                         </button>
                         <div id="faq-content-3" class="hidden px-6 pb-6 pt-0">
                             <p class="text-gray-600">
-                                Absolutely. We don't store your conversations or sell your data to third parties. Your prompts are only sent to the AI providers you select, and we use industry-standard encryption for all communications.
+                                Deepest Seeker supports leading models like GPT-4, Claude 3, Gemini, Llama, Grok, DeepSeek, and more. We continuously update to include the latest and most powerful AIs. You might need your own API keys for some models if you exceed free tier limits of those providers.
                             </p>
                         </div>
                     </div>
                     <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button onclick="toggleFAQ(4)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none">
-                            <span class="text-lg font-medium text-gray-900">Can I use my own API keys?</span>
+                        <button onclick="toggleFAQ(4)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50">
+                            <span class="text-lg font-medium text-gray-900">Is my data private? How does it work?</span>
                             <i id="faq-icon-4" class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
                         </button>
                         <div id="faq-content-4" class="hidden px-6 pb-6 pt-0">
                             <p class="text-gray-600">
-                                Yes! Pro and Enterprise users can connect their own API keys for supported AI providers. This gives you more control over your usage and costs.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg overflow-hidden">
-                        <button onclick="toggleFAQ(5)" class="w-full flex justify-between items-center p-6 text-left focus:outline-none">
-                            <span class="text-lg font-medium text-gray-900">How do I cancel my subscription?</span>
-                            <i id="faq-icon-5" class="fas fa-chevron-down text-purple-600 transition-transform duration-300"></i>
-                        </button>
-                        <div id="faq-content-5" class="hidden px-6 pb-6 pt-0">
-                            <p class="text-gray-600">
-                                You can cancel anytime from your account settings. Your subscription will remain active until the end of the current billing period, and you'll revert to the free plan.
+                                Absolutely. Deepest Seeker operates <strong class="text-purple-700">entirely locally within your browser</strong>. Your prompts, API keys (if you use your own), and the AI responses are never sent to our servers or any third party other than the AI providers you choose to query. We don't track or store your interactions. Your privacy is paramount.
                             </p>
                         </div>
                     </div>
@@ -673,130 +377,186 @@
         </div>
     </div>
 
-    <!-- CTA Section -->
-    <div id="install" class="py-16 gradient-bg text-white">
+    <div id="download" class="py-16 gradient-bg text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Removed "Join 12,487+ Professionals..." heading -->
             <h2 class="text-3xl font-extrabold sm:text-4xl mb-6">
-                Ready to Supercharge Your Browser?
+                Ready to Tame the AI Chaos?
             </h2>
-            <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-                Join thousands of professionals who are already using LLM Council to work smarter, not harder.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#" class="install-btn inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-purple-700 bg-white hover:bg-gray-50 transition duration-300">
-                    <i class="fab fa-chrome mr-2"></i> Add to Chrome - It's Free
+            <div class="max-w-2xl mx-auto mb-8">
+                 <p class="text-xl mb-8 opacity-90">
+                    One prompt, multiple AIs, zero tab-switching. It's that simple.
+                </p>
+                <div class="grid grid-cols-3 gap-4 text-left mb-8">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                        <span class="text-sm">Free</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                        <span class="text-sm">Quick Install</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                        <span class="text-sm">No Credit Card</span>
+                    </div>
+                </div>
+                <a href="deepest_seek_0520.zip" class="download-btn inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-md text-purple-700 bg-white hover:bg-gray-50 transition duration-300 shadow-xl hover:shadow-2xl">
+                    <i class="fas fa-download mr-2"></i> Download now - It's free
                 </a>
-                <a href="#" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-800 bg-opacity-60 hover:bg-opacity-70 transition duration-300">
-                    <i class="fas fa-question-circle mr-2"></i> Contact Support
-                </a>
+                <p class="mt-4 text-sm opacity-80">Works with Chrome | Updated May 2025</p>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Product</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Features</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Pricing</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Roadmap</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Changelog</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition duration-300">Features</a></li>
+                        <li><a href="#installation-guide" class="text-gray-400 hover:text-white transition duration-300">Install Guide</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-white transition duration-300">FAQ</a></li>
+                        <li><a href="#download" class="text-gray-400 hover:text-white transition duration-300">Download</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Resources</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Documentation</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Tutorials</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">API Status</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Blog (Coming Soon)</a></li>
+                        <li><a href="mailto:support@deepestseeker.com" class="text-gray-400 hover:text-white transition duration-300">Contact Us</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">About</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms</a></li>
+                        <li><a href="/privacy-policy.html" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a></li>
+                        <li><a href="/terms-of-service.html" class="text-gray-400 hover:text-white transition duration-300">Terms of Service</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Connect</h3>
                     <div class="flex space-x-4 mb-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-github"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-discord"></i></a>
-                    </div>
-                    <p class="text-gray-400 text-sm">
-                        Subscribe to our newsletter for updates and tips.
-                    </p>
-                    <div class="mt-2 flex">
-                        <input type="email" placeholder="Your email" class="flex-1 bg-gray-800 text-white px-3 py-2 text-sm rounded-l focus:outline-none focus:ring-1 focus:ring-purple-500">
-                        <button class="bg-purple-600 text-white px-3 py-2 rounded-r text-sm">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <a href="#" aria-label="Twitter" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="GitHub" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-github"></i></a>
                     </div>
                 </div>
             </div>
             <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
                 <div class="flex items-center mb-4 md:mb-0">
-                    <i class="fas fa-robot text-2xl mr-2 text-purple-500"></i>
-                    <span class="text-xl font-bold">LLM Council</span>
+                    <i class="fas fa-brain text-2xl mr-2 text-purple-500"></i>
+                    <span class="text-xl font-bold">Deepest Seeker</span>
                 </div>
                 <p class="text-gray-400 text-sm">
-                    © 2023 LLM Council. All rights reserved.
+                    © 2024 Deepest Seeker. All rights reserved.
                 </p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Toggle FAQ items
         function toggleFAQ(index) {
             const content = document.getElementById(`faq-content-${index}`);
             const icon = document.getElementById(`faq-icon-${index}`);
+            const allContents = document.querySelectorAll('[id^="faq-content-"]');
+            const allIcons = document.querySelectorAll('[id^="faq-icon-"]');
+
+            allContents.forEach((item, idx) => {
+                if (item.id !== `faq-content-${index}` && !item.classList.contains('hidden')) {
+                    item.classList.add('hidden');
+                    if (allIcons[idx]) {
+                        allIcons[idx].classList.remove('rotate-180');
+                    }
+                }
+            });
             
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
-                icon.classList.add('transform', 'rotate-180');
+                icon.classList.add('rotate-180');
             } else {
                 content.classList.add('hidden');
-                icon.classList.remove('transform', 'rotate-180');
+                icon.classList.remove('rotate-180');
             }
         }
 
-        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
-                
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
+                    let offset = document.getElementById('navbar')?.offsetHeight || 70;
                     window.scrollTo({
-                        top: targetElement.offsetTop - 80,
+                        top: targetElement.offsetTop - offset,
                         behavior: 'smooth'
                     });
                 }
             });
         });
 
-        // Add shadow to navbar on scroll
         window.addEventListener('scroll', function() {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 10) {
-                nav.classList.add('shadow-lg');
-            } else {
-                nav.classList.remove('shadow-lg');
+            const nav = document.getElementById('navbar');
+            if (nav) {
+                if (window.scrollY > 10) {
+                    nav.classList.remove('shadow-sm');
+                    nav.classList.add('shadow-lg');
+                } else {
+                    nav.classList.remove('shadow-lg');
+                    nav.classList.add('shadow-sm');
+                }
+            }
+            const progressBar = document.getElementById("progress-bar");
+            if (progressBar) {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (height > 0) {
+                    const scrolled = (winScroll / height) * 100;
+                    progressBar.style.width = scrolled + "%";
+                } else {
+                     progressBar.style.width = "0%";
+                }
             }
         });
+        
+        document.querySelectorAll('a[href*="#download"], a[href$=".zip"]').forEach(cta => {
+            cta.addEventListener('click', function() {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'conversion', {
+                        'event_category': 'CTA Click',
+                        'event_label': this.innerText.trim() || 'Download Click'
+                    });
+                }
+            });
+        });
+
+        // Video Player Logic
+        const videoPlayerContainer = document.getElementById('video-player-container');
+        const videoThumbnail = document.getElementById('video-thumbnail');
+        const playButtonOverlay = document.getElementById('play-button-overlay');
+        const demoVideoPlayer = document.getElementById('demo-video-player');
+
+        if (videoPlayerContainer && videoThumbnail && playButtonOverlay && demoVideoPlayer) {
+            videoPlayerContainer.addEventListener('click', function() {
+                if (demoVideoPlayer.classList.contains('hidden')) {
+                    videoThumbnail.classList.add('hidden');
+                    playButtonOverlay.classList.add('hidden');
+                    demoVideoPlayer.classList.remove('hidden');
+                    demoVideoPlayer.play().catch(error => console.error("Error attempting to play video:", error));
+                }
+            });
+
+            demoVideoPlayer.addEventListener('ended', function() {
+                demoVideoPlayer.classList.add('hidden');
+                videoThumbnail.classList.remove('hidden');
+                playButtonOverlay.classList.remove('hidden');
+                demoVideoPlayer.currentTime = 0; // Reset video to start
+            });
+            
+            // Optional: If user clicks video to pause, and then clicks container again, it should not hide video.
+            // This is handled by the `if (demoVideoPlayer.classList.contains('hidden'))` check.
+        }
     </script>
 </body>
 </html>
